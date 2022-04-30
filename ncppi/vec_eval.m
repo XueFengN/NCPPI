@@ -1,4 +1,39 @@
-function [mic, mac] = evaluate(predict, true_label)
+function [mic, mac] = evaluate(ttr,F, true_label)
+
+	classnum=size(true_label,2);
+	pred=[ttr;zeros(length(true_label),classnum);];
+	n=size(F,1);
+	len_train=length(ttr);
+	row_label=sum(true_label,2);
+	
+	for i=(len_train+1):n
+		vt=F(i,:);
+		[des,ind]=sort(vt,'descend');
+		num_label=row_label(i-len_train);
+		pred(i,:)=0;
+		
+		for j=1:num_label-1
+			pred(i,ind(j))=1;
+		end
+		if des(num_label)~=des(num_label+1)
+			pred(i,ind(num_label))=1;
+		else
+			cop=find(vt==des(num_label));
+			cop1=find(des==des(num_label));
+			pred(i,cop)=0;
+			num=num_label-(cop1(1)-1);
+			la_3=[];
+			for v=1:num
+				rand_num=randsrc(1,1,cop1);
+				la_3=[la_3 rand_num];
+				cop1(cop1==rand_num)=[];
+			end
+			pred(i,ind(la_3))=1;
+		end
+	end
+	tet=(len_train+1):n;
+	predict=pred(tet,:);
+
 	temp = predict & true_label;
 	num_corr = sum(temp, 1);
 	num_true = sum(true_label,   1);
