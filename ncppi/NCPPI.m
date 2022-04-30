@@ -31,9 +31,7 @@ function [result] = NCPPI (Network)
 		
 		
 		ttr=label(train,:);
-		tte=label(test,:);
-		ttlabel=[ttr;tte];
-		row_label=sum(ttlabel,2);
+		true_label=label(test,:);
 
 		
 		testing=ones(length(test),classnum);
@@ -60,39 +58,8 @@ function [result] = NCPPI (Network)
 		end
 		
 		clear P 
-		cc=zeros(length(test),classnum);
-		predict=[ttr;cc];
-		sii=length(train);
 		
-		for i=(sii+1):n
-			vt=F(i,:);
-			[a,b]=sort(vt,'descend');
-			num_label=row_label(i);
-			predict(i,:)=0;
-			
-			for zzz=1:num_label-1
-				predict(i,b(zzz))=1;
-			end
-			if a(num_label)~=a(num_label+1)
-				predict(i,b(num_label))=1;
-			else
-				cop=find(vt==a(num_label));
-				cop1=find(a==a(num_label));
-				predict(i,cop)=0;
-				num=num_label-(cop1(1)-1);
-				la_3=[];
-				for v=1:num
-					rand_num=randsrc(1,1,cop1);
-					la_3=[la_3 rand_num];
-					cop1(cop1==rand_num)=[];
-				end
-				predict(i,b(la_3))=1;
-			end
-		end
-		tet=(length(ttr)+1):n;
-		pred=predict(tet,:);
-		true_label=tte;
-		[p11,p22]=vec_eval(pred,true_label)
+		[p11,p22]=vec_eval(Y,F,true_label)
 
 		micro_F1(run)=p11 ;
 		macro_F1(run)=p22;
