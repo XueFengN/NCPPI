@@ -37,8 +37,9 @@ function [result] = NCPPI (Network)
 		testing=ones(length(test),classnum);
 		proba=1/classnum;
 		testing=testing*proba;
+		
+		%F represents a posteriori probability matrix
 		F=[ttr; testing];
-
 		ti=0.9;
 		Y=ttr;
 		
